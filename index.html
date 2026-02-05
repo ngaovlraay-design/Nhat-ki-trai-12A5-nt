@@ -88,8 +88,13 @@
         }
 
         .stack-container {
-            position: relative; width: 350px; height: 500px; flex-shrink: 0;
-        }
+    position: relative;
+    width: 90vw; /* Sử dụng đơn vị vw (viewport width) để tự co dãn theo chiều rộng màn hình */
+    max-width: 350px; /* Không bao giờ vượt quá 350px trên máy tính */
+    height: 450px;
+    flex-shrink: 0;
+    margin: 0 auto;
+}
 
         .stacked-img {
             position: absolute; width: 100%; height: 100%;
@@ -247,6 +252,45 @@
         padding-top: 60px; /* Đẩy nội dung xuống để không bị nút đóng đè lên */
     }
 }
+@media (max-width: 768px) {
+    /* 1. Sắp xếp lại nội dung Modal theo chiều dọc */
+    .modal-inner {
+        flex-direction: column;
+        gap: 20px;
+        padding-top: 80px; /* Chừa chỗ cho nút X ở trên cùng */
+        overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
+        height: 100%;
+    }
+
+    /* 2. Đưa các nút điều hướng xuống dưới cùng và cố định chúng */
+    .slider-controls {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        width: 100%;
+        justify-content: center;
+        z-index: 5001;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        padding: 20px 0;
+    }
+
+    .nav-btn {
+        padding: 15px 40px; /* Làm nút to hơn để dễ bấm bằng ngón tay */
+        background: var(--v-red);
+        color: white;
+    }
+
+    /* 3. Thu nhỏ tiêu đề để không chiếm hết diện tích */
+    .album-info h2 {
+        font-size: 2rem;
+        text-align: center;
+    }
+    
+    .album-info {
+        max-width: 90%;
+        margin-bottom: 100px; /* Chừa khoảng trống cho nút điều hướng ở dưới */
+    }
+}
     </style>
 </head>
 <body>
@@ -323,8 +367,8 @@
         </div>
 
         <div class="story-footer">
-            <p>"Mọi thứ rồi sẽ thay đổi, chỉ có những ngày ở bên nhau là còn ở lại."</p>
-            <div class="status-badge">VÀ TA SẼ GẶP LẠI SỚM THÔI</div>
+            <p>"Mục tiêu tháng 5 không chỉ là một con số, đó là minh chứng cho sự trưởng thành."</p>
+            <div class="status-badge">MISSION IN PROGRESS</div>
         </div>
     </section>
     <div id="album-modal">
@@ -414,4 +458,3 @@
     </script>
 </body>
 </html>
-
