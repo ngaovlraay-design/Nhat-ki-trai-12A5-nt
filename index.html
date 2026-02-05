@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Archive | Mentor Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Special+Elite&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --v-red: #9B1C1C;
+            --dark-bg: #0a0a0a;
+            --text-gold: #f4ecd8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-gold);
+            font-family: 'Special Elite', cursive;
+            overflow-x: hidden;
+        }
+
+        /* --- INTRO CURTAIN --- */
+        .intro-curtain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: #000; z-index: 5000;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+
+        /* --- BENTO GRID STYLE (7 ITEMS) --- */
+        .bento-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-auto-rows: 300px;
+            gap: 20px; padding: 50px;
+            max-width: 1400px; margin: 0 auto;
+            opacity: 0;
+        }
+
+        .photo-item {
+            background: #1a1a1a;
+            position: relative; overflow: hidden;
+            cursor: pointer; border: 1px solid rgba(155, 28, 28, 0.3);
+        }
+
+        .photo-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(1); transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .photo-item:hover img { filter: grayscale(0); transform: scale(1.1); }
+
+        /* Layout 7 Items */
+        .item-1 { grid-column: 1 / 4; } 
+        .item-2 { grid-column: 4 / 7; }
+        .item-3 { grid-column: 1 / 3; } 
+        .item-4 { grid-column: 3 / 5; } 
+        .item-5 { grid-column: 5 / 7; }
+        .item-6 { grid-column: 1 / 4; } /* Mới */
+        .item-7 { grid-column: 4 / 7; } /* Mới */
+
+        /* --- MODAL & EXPLOSION SLIDER --- */
+        #album-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); display: none; z-index: 4000;
+            justify-content: center; align-items: center;
+        }
+
+        .modal-inner {
+            width: 90%; max-width: 1200px; display: flex; gap: 60px; align-items: center;
+            flex-wrap: wrap; justify-content: center;
+        }
+
+        .stack-container {
+            position: relative; width: 350px; height: 500px; flex-shrink: 0;
+        }
+
+        .stacked-img {
+            position: absolute; width: 100%; height: 100%;
+            object-fit: cover; border: 10px solid #fff;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.8);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            pointer-events: none;
+        }
+
+        /* Explosion Positions */
+        .stack-container.exploded .img-0 { transform: translate(-50px, -40px) rotate(-10deg); opacity: 0.7; }
+        .stack-container.exploded .img-1 { transform: translate(50px, -30px) rotate(8deg); opacity: 0.7; }
+        .stack-container.exploded .img-2 { transform: translate(-30px, 50px) rotate(-5deg); opacity: 0.7; }
+        
+        /* Tấm đang active luôn ở giữa và lên trên cùng */
+        .stacked-img.active-slide {
+            transform: translate(0, 0) rotate(0) scale(1.1) !important;
+            z-index: 100;
+            opacity: 1 !important;
+            box-shadow: 0 0 50px rgba(155, 28, 28, 0.5);
+        }
+
+        .album-info { max-width: 500px; }
+        .album-info h2 { font-family: 'Playfair Display'; font-size: 3.5rem; color: var(--v-red); margin-bottom: 15px; }
+        
+        .slider-controls { margin-top: 30px; display: flex; gap: 15px; }
+        .nav-btn {
+            background: none; border: 1px solid var(--v-red); color: var(--v-red);
+            padding: 12px 25px; cursor: pointer; font-family: 'Special Elite';
+            transition: 0.3s;
+        }
+        .nav-btn:hover { background: var(--v-red); color: white; }
+
+        .close-btn { position: absolute; top: 30px; right: 50px; font-size: 3rem; cursor: pointer; color: #fff; }
+    .story-chronicle {
+    max-width: 1000px;
+    margin: 100px auto;
+    padding: 0 20px;
+}
+
+.section-divider {
+    text-align: center;
+    border-bottom: 1px solid rgba(244, 236, 216, 0.2);
+    margin-bottom: 80px;
+    line-height: 0.1em;
+}
+
+.section-divider span {
+    background: var(--dark-bg);
+    padding: 0 20px;
+    color: var(--v-red);
+    letter-spacing: 5px;
+    font-size: 1.2rem;
+}
+
+.story-chapter {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 120px;
+}
+
+.story-chapter.reverse {
+    flex-direction: row-reverse;
+}
+
+.chapter-info {
+    flex: 1;
+}
+
+.chapter-number {
+    font-size: 3rem;
+    color: rgba(155, 28, 28, 0.3);
+    font-family: 'Playfair Display', serif;
+    display: block;
+}
+
+.chapter-info h3 {
+    color: var(--v-red);
+    margin: 10px 0;
+    letter-spacing: 2px;
+}
+
+.chapter-info p {
+    line-height: 1.8;
+    color: #ccc;
+    font-size: 0.95rem;
+    text-align: justify;
+}
+
+.chapter-media {
+    flex: 1;
+    border: 1px solid var(--v-red);
+    padding: 10px;
+    filter: grayscale(0.5);
+    transition: 0.5s;
+}
+
+.chapter-media:hover {
+    filter: grayscale(0);
+    transform: scale(1.02);
+}
+
+.chapter-media img {
+    width: 100%;
+    display: block;
+}
+
+.story-footer {
+    text-align: center;
+    margin-top: 100px;
+    font-style: italic;
+}
+
+.status-badge {
+    display: inline-block;
+    border: 1px solid var(--v-red);
+    color: var(--v-red);
+    padding: 10px 30px;
+    margin-top: 30px;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+    </style>
+</head>
+<body>
+
+    <div class="intro-curtain">
+        <h1 style="font-family: 'Playfair Display'; color: var(--v-red); font-size: 4vw;">CHÀO MỪNG BẠN ĐÃ ĐẾN VỚI</h1>
+        <div style="width: 200px; height: 2px; background: #333; margin-top: 20px; position: relative; overflow: hidden;">
+            <div id="progress-bar" style="width: 0%; height: 100%; background: var(--v-red);"></div>
+        </div>
+    </div>
+
+    <section style="height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <h1 id="hero-title" style="font-family: 'Playfair Display'; font-size: 10vw; color: var(--v-red); line-height: 0.9;"> HỒ SƠ TIỂU TRẠI</h1>
+        <p style="margin-top: 20px; letter-spacing: 5px; opacity: 0.5;">Tập thể lớp 12/5</p>
+    </section>
+
+    <div class="bento-container" id="main-grid">
+        <div class="photo-item item-1" onclick="openAlbum('Chương 1', 'Ngọn đuốc thanh niên và lều trại.', ['asset/1.png','asset/2.png','asset/3.png','asset/leu.jpg'])">
+            <img src="asset/4.png" alt="">
+        </div>
+        <div class="photo-item item-2" onclick="openAlbum('Chương 2', 'Dân vũ.', ['asset/5.jpg','asset/6.jpg','asset/7.png'])">
+            <img src="asset/8.png" alt="">
+        </div>
+        <div class="photo-item item-3" onclick="openAlbum('Chương 3', 'Văn nghệ.', ['asset/vnghe.jpg','asset/vnghe1.jpg','asset/vnghe2.jpg','asset/vnghe3.jpg','asset/vnghe6.png','asset/vnghe7.png','asset/vnghe8.png'])">
+            <img src="asset/vnghe4.jpg" alt="">
+        </div>
+        <div class="photo-item item-4" onclick="openAlbum('Chương 4', 'Thi vận động - rung chuông vàng.', ['https://picsum.photos/400/550?v=10', 'https://picsum.photos/400/550?v=11', 'https://picsum.photos/400/550?v=12'])">
+            <img src="https://picsum.photos/800/400?v=14" alt="">
+        </div>
+        <div class="photo-item item-5" onclick="openAlbum('Chương 5', 'Trò chơi lớn', ['https://picsum.photos/400/550?v=13', 'https://picsum.photos/400/550?v=14', 'https://picsum.photos/400/550?v=15'])">
+            <img src="https://picsum.photos/800/400?v=15" alt="">
+        </div>
+        <div class="photo-item item-6" onclick="openAlbum('Chương 6', 'Mâm ẩm thực tết xưa.', ['https://picsum.photos/400/550?v=16', 'https://picsum.photos/400/550?v=17', 'https://picsum.photos/400/550?v=18'])">
+            <img src="https://picsum.photos/800/400?v=16" alt="">
+        </div>
+        <div class="photo-item item-7" onclick="openAlbum('Chương 7', 'Các hoạt động khác.', ['https://picsum.photos/400/550?v=19', 'https://picsum.photos/400/550?v=20', 'https://picsum.photos/400/550?v=21'])">
+            <img src="https://picsum.photos/800/400?v=17" alt="">
+        </div>
+    </div>
+    <section class="story-chronicle">
+        <div class="section-divider"><span>THE CHRONICLES</span></div>
+
+        <div class="story-chapter" data-aos="fade-up">
+            <div class="chapter-info">
+                <span class="chapter-number">01</span>
+                <h3>KHỞI ĐẦU</h3>
+                <p>Khởi đầu của chúng tôi rất đơn giản. Chỉ là những con người xa lạ, tình cờ được xếp chung vào một lớp học. Lúc đó, ai cũng có thế giới riêng, có những bỡ ngỡ và khoảng cách rất nhỏ nhưng đủ để ngại ngần. Rồi từng ngày trôi qua, từ việc nhớ tên nhau, quen giọng nói, quen chỗ ngồi, chúng tôi dần trở nên thân thuộc hơn. Những buổi học bình thường, những lần cùng mệt, cùng cười, cùng trải qua áp lực của tuổi mười tám đã kéo chúng tôi lại gần nhau. Từ một sự gặp gỡ ngẫu nhiên, chúng tôi có được một tập thể để nhớ, để thương, và để sau này nhìn lại mà mỉm cười.</p>
+            </div>
+            <div class="chapter-media">
+                <img src="asset/khoidau.jpg" alt="Khởi đầu">
+            </div>
+        </div>
+
+        <div class="story-chapter reverse" data-aos="fade-up">
+            <div class="chapter-info">
+                <span class="chapter-number">02</span>
+                <h3>NHỮNG ĐIỀU ĐÃ TRẢI QUA</h3>
+                <p>Những điều chúng tôi đã trải qua không phải lúc nào cũng vui. Có những ngày mệt vì bài vở, áp lực thi cử, có những lúc hiểu lầm và im lặng. Nhưng xen giữa tất cả là những khoảnh khắc rất thật, những lần cùng nhau cười vì những điều nhỏ xíu, những buổi học tưởng như bình thường nhưng sau này nhớ lại lại thấy quý vô cùng. Chúng tôi đã lớn lên cùng nhau qua từng ngày, học cách kiên nhẫn hơn, biết nghĩ cho người khác hơn, và biết trân trọng những khoảng thời gian được ở cạnh nhau. Chính những điều giản dị ấy đã trở thành kỉ niệm, là thứ gắn kết chúng tôi thành một phần tuổi trẻ không thể thay thế.</p>
+            </div>
+            <div class="chapter-media">
+                <img src="asset/khokhan.jpg" alt="Tập luyện">
+            </div>
+        </div>
+
+        <div class="story-chapter" data-aos="fade-up">
+            <div class="chapter-info">
+                <span class="chapter-number">03</span>
+                <h3>NHỮNG KỈ NIỆM VUI VẺ</h3>
+                <p>Những lần vui vẻ của chúng tôi thường đến từ những điều rất giản đơn. Có khi là một câu nói bâng quơ làm cả lớp cười ầm lên, có khi là những buổi sinh hoạt, những trò chơi ngây ngô nhưng ai cũng tham gia hết mình. Trong những khoảnh khắc ấy, áp lực học tập dường như được đặt sang một bên, chỉ còn lại tiếng cười, sự thoải mái và cảm giác được là chính mình. Những lần vui như vậy không kéo dài quá lâu, nhưng đủ để khiến chúng tôi nhớ mãi, vì đó là những lúc cả lớp thật sự ở bên nhau, không lo lắng, không khoảng cách, chỉ có niềm vui rất trong trẻo của tuổi học trò.</p>
+            </div>
+            <div class="chapter-media">
+                <img src="asset/vui haha.jpg" alt="Kỉ niệm">
+            </div>
+        </div>
+
+        <div class="story-footer">
+            <p>"Mục tiêu tháng 5 không chỉ là một con số, đó là minh chứng cho sự trưởng thành."</p>
+            <div class="status-badge">MISSION IN PROGRESS</div>
+        </div>
+    </section>
+    <div id="album-modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div class="modal-inner">
+            <div class="stack-container" id="image-stack"></div>
+            <div class="album-info">
+                <h2 id="modal-title">TITLE</h2>
+                <p id="modal-desc"></p>
+                <div class="slider-controls">
+                    <button class="nav-btn" onclick="changeSlide(-1)">← PREVIOUS</button>
+                    <button class="nav-btn" onclick="changeSlide(1)">NEXT →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. INTRO GSAP ---
+        const tl = gsap.timeline();
+        tl.to("#progress-bar", { width: "100%", duration: 2, ease: "power2.inOut" })
+          .to(".intro-curtain", { yPercent: -100, duration: 1.2, ease: "expo.inOut" })
+          .to("#main-grid", { opacity: 1, duration: 1 });
+
+        // --- 2. LOGIC MODAL & SLIDER FIX ---
+        let currentImgs = [];
+        let activeIdx = 0;
+
+        function openAlbum(title, desc, imgs) {
+            currentImgs = imgs;
+            activeIdx = 0; // Luôn bắt đầu từ tấm đầu tiên trong mảng
+            
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            
+            const stack = document.getElementById('image-stack');
+            stack.innerHTML = '';
+            
+            // Tạo các tấm ảnh
+            imgs.forEach((src, i) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = `stacked-img img-${i}`;
+                // Đảo ngược z-index ban đầu để tấm cuối cùng nằm dưới cùng
+                img.style.zIndex = imgs.length - i; 
+                stack.appendChild(img);
+            });
+
+            document.getElementById('album-modal').style.display = 'flex';
+            
+            setTimeout(() => {
+                stack.classList.add('exploded');
+                updateActiveSlide();
+            }, 100);
+        }
+
+        function changeSlide(dir) {
+            activeIdx = (activeIdx + dir + currentImgs.length) % currentImgs.length;
+            updateActiveSlide();
+        }
+
+        function updateActiveSlide() {
+            const allImgs = document.querySelectorAll('.stacked-img');
+            allImgs.forEach((img, i) => {
+                img.classList.remove('active-slide');
+                // Tấm nào không active thì trả về z-index thấp
+                img.style.zIndex = (i === activeIdx) ? 100 : 1; 
+                
+                if(i === activeIdx) {
+                    img.classList.add('active-slide');
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('album-modal').style.display = 'none';
+            document.getElementById('image-stack').classList.remove('exploded');
+        }
+
+        // --- 3. MOUSE PARALLAX ---
+        document.addEventListener("mousemove", (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 40;
+            const y = (window.innerHeight / 2 - e.pageY) / 40;
+            gsap.to(".photo-item", { x: x, y: y, duration: 1 });
+            gsap.to("#hero-title", { x: -x, y: -y, duration: 1 });
+        });
+    </script>
+</body>
+</html>
