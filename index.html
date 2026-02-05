@@ -3,25 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>12A5 | INFRANGIBLE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Special+Elite&display=swap" rel="stylesheet">
+    <title>12A5 | INFRANCIBLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@800&family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
         :root {
-            --v-red: #9B1C1C;
-            --dark-bg: #0a0a0a;
-            --text-gold: #f4ecd8;
-        }
+                --v-red: #9B1C1C;
+                --dark-bg: #0a0a0a;
+                --text-gold: #f4ecd8;
+                /* Thêm các biến font này để dễ quản lý */
+                --font-header: 'EB Garamond', serif;
+                --font-body: 'Be Vietnam Pro', sans-serif;
+            }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: var(--dark-bg);
-            color: var(--text-gold);
-            font-family: 'Special Elite', cursive;
-            overflow-x: hidden;
-        }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            body {
+                background-color: var(--dark-bg);
+                color: var(--text-gold);
+                font-family: var(--font-body); /* Chữ mặc định là font hiện đại */
+                line-height: 1.6;
+                overflow-x: hidden;
+            }
+
+            /* Các tiêu đề lớn dùng font có chân (Serif) cho quyền lực */
+            h1, h2, h3, .big-title {
+                font-family: var(--font-header);
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
 
         /* --- INTRO CURTAIN --- */
         .intro-curtain {
@@ -247,7 +259,7 @@
         </div>
     </div>
     <section class="story-chronicle">
-        <div class="section-divider"><span>THE CHRONICLES</span></div>
+        <div class="section-divider"><span>ABC5</span></div>
 
         <div class="story-chapter" data-aos="fade-up">
             <div class="chapter-info">
@@ -373,5 +385,4 @@
         });
     </script>
 </body>
-
 </html>
