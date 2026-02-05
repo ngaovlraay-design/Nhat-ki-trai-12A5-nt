@@ -123,7 +123,23 @@
         }
         .nav-btn:hover { background: var(--v-red); color: white; }
 
-        .close-btn { position: absolute; top: 30px; right: 50px; font-size: 3rem; cursor: pointer; color: #fff; }
+        .close-btn { 
+    position: fixed; /* Chuyển sang fixed để luôn cố định so với màn hình */
+    top: 20px; 
+    right: 20px; /* Thu hẹp khoảng cách trên điện thoại */
+    font-size: 3rem; 
+    cursor: pointer; 
+    color: #fff; 
+    z-index: 9999; /* Đảm bảo con số này cao nhất trong file của bạn */
+    background: rgba(0,0,0,0.5); /* Thêm nền mờ để dễ nhìn thấy trên ảnh sáng màu */
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    line-height: 0;
+}
     .story-chronicle {
     max-width: 1000px;
     margin: 100px auto;
@@ -218,6 +234,18 @@
     0% { opacity: 1; }
     50% { opacity: 0.4; }
     100% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .close-btn {
+        top: 10px;
+        right: 10px;
+        font-size: 2.5rem; /* Nhỏ lại một chút để không chiếm diện tích */
+    }
+    
+    .modal-inner {
+        padding-top: 60px; /* Đẩy nội dung xuống để không bị nút đóng đè lên */
+    }
 }
     </style>
 </head>
